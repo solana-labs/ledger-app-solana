@@ -1,5 +1,3 @@
-#ifdef UNIT_TEST
-
 #include "parser.c"
 #include <stdio.h>
 #include <assert.h>
@@ -132,5 +130,3 @@ int main() {
     printf("passed\n");
     return 0;
 }
-
-#endif

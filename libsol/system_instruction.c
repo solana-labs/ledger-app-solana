@@ -47,7 +47,8 @@ static int parse_system_transfer_instruction(Instruction* instruction, Pubkey* p
     return 0;
 }
 
-// Returns 0, the fee payer, and system transfer info if provided a transfer message, otherwise non-zero.
+// Returns 0 and populates SystemTransferInfo if provided a MessageHeader and a transfer
+// instruction, otherwise non-zero.
 int parse_system_transfer_instructions(Parser* parser, MessageHeader* header, SystemTransferInfo* info) {
     BAIL_IF(header->instructions_length != 1);
 

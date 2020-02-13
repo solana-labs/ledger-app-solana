@@ -3,6 +3,7 @@
 #include "ux.h"
 #include "cx.h"
 #include "utils.h"
+#include "parser.h"
 
 static char messageHash[BASE58_HASH_LENGTH];
 static unsigned char signature[SIGNATURE_LENGTH];
@@ -67,6 +68,14 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     int messageLength = U2BE(dataBuffer, 0);
     dataBuffer += 2;
     uint8_t *message = dataBuffer;
+
+    Parser parser = {message, messageLength};
+    MessageHeader header;
+    if (parse_message_header(&parser, &header)) {
+        // This is not a valid Solana message
+        sendResponse(0, false);
+        return;
+    }
 
     cx_hash_sha256(dataBuffer, dataLength, messageHashBytes, HASH_LENGTH);
 

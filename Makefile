@@ -127,8 +127,9 @@ include $(BOLOS_SDK)/Makefile.glyphs
 
 ### variables processed by the common makefile.rules of the SDK to grab source files and include dirs
 APP_SOURCE_PATH  += src
-APP_SOURCE_FILES += $(filter-out %_test.c,$(wildcard libsol/*.c))
+SOURCE_FILES += $(filter-out %_test.c,$(wildcard libsol/*.c))
 SDK_SOURCE_PATH  += lib_stusb lib_stusb_impl lib_u2f
+CFLAGS += -Ilibsol
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl

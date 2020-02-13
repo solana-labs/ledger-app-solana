@@ -41,31 +41,31 @@ void test_parse_length_two_bytes() {
 }
 
 void test_parse_pubkeys_header() {
-   uint8_t message[] = {1, 2, 3};
+   uint8_t message[] = {1, 2, 3, 4};
    Parser parser = {message, sizeof(message)};
    PubkeysHeader header;
    assert(parse_pubkeys_header(&parser, &header) == 0);
    assert(parser.buffer_length == 0);
-   assert(parser.buffer == message + 3);
+   assert(parser.buffer == message + 4);
 }
 
 void test_parse_pubkeys() {
-   uint8_t message[PUBKEY_SIZE + 1] = {1, 42};
+   uint8_t message[PUBKEY_SIZE + 4] = {1, 2, 3, 1, 42};
    Parser parser = {message, sizeof(message)};
+   PubkeysHeader header;
    Pubkey* pubkeys;
-   size_t pubkeys_length;
-   assert(parse_pubkeys(&parser, &pubkeys, &pubkeys_length) == 0);
+   assert(parse_pubkeys(&parser, &header, &pubkeys) == 0);
    assert(parser.buffer_length == 0);
-   assert(parser.buffer == message + PUBKEY_SIZE + 1);
+   assert(parser.buffer == message + PUBKEY_SIZE + 4);
    assert(pubkeys->data[0] == 42);
 }
 
 void test_parse_pubkeys_too_short() {
-   uint8_t message[] = {1};
+   uint8_t message[] = {1, 2, 3, 1};
    Parser parser = {message, sizeof(message)};
+   PubkeysHeader header;
    Pubkey* pubkeys;
-   size_t pubkeys_length;
-   assert(parse_pubkeys(&parser, &pubkeys, &pubkeys_length) == 1);
+   assert(parse_pubkeys(&parser, &header, &pubkeys) == 1);
 }
 
 void test_parse_blockhash() {

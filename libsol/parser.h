@@ -31,6 +31,7 @@ typedef struct PubkeysHeader {
     uint8_t num_required_signatures;
     uint8_t num_readonly_signed_accounts;
     uint8_t num_readonly_unsigned_accounts;
+    size_t pubkeys_length;
 } PubkeysHeader;
 
 typedef struct MessageHeader {
@@ -49,7 +50,7 @@ int parse_length(Parser* parser, size_t* value);
 
 int parse_pubkeys_header(Parser* parser, PubkeysHeader* header);
 
-int parse_pubkeys(Parser* parser, Pubkey** pubkeys, size_t* pubkeys_length);
+int parse_pubkeys(Parser* parser, PubkeysHeader* header, Pubkey** pubkeys);
 
 int parse_blockhash(Parser* parser, Blockhash** blockhash);
 

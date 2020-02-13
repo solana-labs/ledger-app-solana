@@ -23,11 +23,11 @@ typedef struct SystemTransferInfo {
     uint64_t lamports;
 } SystemTransferInfo;
 
-int parse_system_instruction_kind(Parser* parser, enum SystemInstructionKind* kind) {
+static int parse_system_instruction_kind(Parser* parser, enum SystemInstructionKind* kind) {
     return parse_u32(parser, (uint32_t *) kind);
 }
 
-int parse_system_transfer(Instruction* instruction, Pubkey* pubkeys, size_t pubkeys_length, SystemTransferInfo* info) {
+static int parse_system_transfer_instruction(Instruction* instruction, Pubkey* pubkeys, size_t pubkeys_length, SystemTransferInfo* info) {
     Parser parser = {instruction->data, instruction->data_length};
 
     enum SystemInstructionKind kind;
@@ -48,31 +48,18 @@ int parse_system_transfer(Instruction* instruction, Pubkey* pubkeys, size_t pubk
 }
 
 // Returns 0, the fee payer, and system transfer info if provided a transfer message, otherwise non-zero.
-int parse_system_transfer_message(Parser* parser, Pubkey** fee_payer_pubkey, SystemTransferInfo* info) {
-    MessageHeader header;
-    BAIL_IF(parse_message_header(parser, &header));
-
-    Pubkey* pubkeys;
-    size_t pubkeys_length;
-    BAIL_IF(parse_pubkeys(parser, &pubkeys, &pubkeys_length));
-    BAIL_IF(pubkeys_length < 1);
-    *fee_payer_pubkey = &pubkeys[0];
-
-    Blockhash* blockhash;
-    BAIL_IF(parse_blockhash(parser, &blockhash));
-
-    size_t instructions_length;
-    BAIL_IF(parse_length(parser, &instructions_length));
-    BAIL_IF(instructions_length != 1);
+int parse_system_transfer_instructions(Parser* parser, MessageHeader* header, SystemTransferInfo* info) {
+    BAIL_IF(header->pubkeys_length < 1);
+    BAIL_IF(header->instructions_length != 1);
 
     Instruction instruction;
     BAIL_IF(parse_instruction(parser, &instruction));
 
-    Pubkey* program_id = &pubkeys[instruction.program_id_index];
+    Pubkey* program_id = &header->pubkeys[instruction.program_id_index];
     Pubkey system_program_id = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     BAIL_IF(memcmp(program_id, &system_program_id, PUBKEY_SIZE));
 
-    BAIL_IF(parse_system_transfer(&instruction, pubkeys, pubkeys_length, info));
+    BAIL_IF(parse_system_transfer_instruction(&instruction, header->pubkeys, header->pubkeys_length, info));
 
     return 0;
 }

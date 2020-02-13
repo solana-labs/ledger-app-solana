@@ -40,11 +40,11 @@ void test_parse_length_two_bytes() {
    assert(value == 128);
 }
 
-void test_parse_message_header() {
+void test_parse_pubkeys_header() {
    uint8_t message[] = {1, 2, 3};
    Parser parser = {message, sizeof(message)};
-   MessageHeader header;
-   assert(parse_message_header(&parser, &header) == 0);
+   PubkeysHeader header;
+   assert(parse_pubkeys_header(&parser, &header) == 0);
    assert(parser.buffer_length == 0);
    assert(parser.buffer == message + 3);
 }
@@ -119,7 +119,7 @@ int main() {
     test_parse_u8_too_short();
     test_parse_length();
     test_parse_length_two_bytes();
-    test_parse_message_header();
+    test_parse_pubkeys_header();
     test_parse_pubkeys();
     test_parse_pubkeys_too_short();
     test_parse_blockhash();

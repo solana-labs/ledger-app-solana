@@ -59,7 +59,7 @@ int parse_length(Parser* parser, size_t* value) {
     return 0;
 }
 
-int parse_message_header(Parser* parser, MessageHeader* header) {
+int parse_pubkeys_header(Parser* parser, PubkeysHeader* header) {
     BAIL_IF(parse_u8(parser, &header->num_required_signatures));
     BAIL_IF(parse_u8(parser, &header->num_readonly_signed_accounts));
     BAIL_IF(parse_u8(parser, &header->num_readonly_unsigned_accounts));
@@ -78,6 +78,14 @@ int parse_blockhash(Parser* parser, Blockhash** blockhash) {
     BAIL_IF(check_buffer_length(parser, BLOCKHASH_SIZE));
     *blockhash = (Blockhash*) parser->buffer;
     advance(parser, BLOCKHASH_SIZE);
+    return 0;
+}
+
+int parse_message_header(Parser* parser, MessageHeader* header) {
+    BAIL_IF(parse_pubkeys_header(parser, &header->pubkeys_header));
+    BAIL_IF(parse_pubkeys(parser, &header->pubkeys, &header->pubkeys_length));
+    BAIL_IF(parse_blockhash(parser, &header->blockhash));
+    BAIL_IF(parse_length(parser, &header->instructions_length));
     return 0;
 }
 

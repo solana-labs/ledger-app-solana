@@ -41,6 +41,9 @@ endif
 ################
 all: default
 
+libsol:
+	$(MAKE) -C libsol
+
 ############
 # Platform #
 ############

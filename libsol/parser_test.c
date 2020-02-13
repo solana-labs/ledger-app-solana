@@ -13,9 +13,10 @@ void test_parse_u8() {
 }
 
 void test_parse_u8_too_short() {
-   uint8_t message[] = {};
+   uint8_t message[] = {42};
    Parser parser = {message, sizeof(message)};
    uint8_t value;
+   assert(parse_u8(&parser, &value) == 0);
    assert(parse_u8(&parser, &value) == 1);
 }
 

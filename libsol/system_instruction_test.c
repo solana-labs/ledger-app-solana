@@ -1,4 +1,4 @@
-#include "systemInstruction.c"
+#include "system_instruction.c"
 #include <stdio.h>
 #include <assert.h>
 

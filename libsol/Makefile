@@ -31,8 +31,6 @@ $o/%_test.ok: $o/%_test
 $o/%_test: %_test.o $o/libsol.a
 	$(CC) $(CFLAGS) -o $@ $^
 
-$o/system_instruction_test: parser.c
-
 #
 # libsol
 #

@@ -89,7 +89,7 @@ mod tests {
         ledger.sign_message(&derivation_path, &data).unwrap_err();
     }
 
-    /// This test requires interactive approval of message signing on the ledger.
+    // This test requires interactive approval of message signing on the ledger.
     #[test]
     #[serial]
     fn test_ledger_sign_transaction() {

@@ -13,6 +13,9 @@ static char feePayer[BASE58_PUBKEY_LENGTH];
 static char senderPubkey[BASE58_PUBKEY_LENGTH];
 static char recipientPubkey[BASE58_PUBKEY_LENGTH];
 
+#define DERIVATION_PATH_TEXT_SIZE 32
+static char derivationPathText[DERIVATION_PATH_TEXT_SIZE];
+
 #define MESSAGE_TRANSFER_SIZE 32
 static char messageTransfer[MESSAGE_TRANSFER_SIZE];
 
@@ -33,6 +36,13 @@ static uint8_t set_result_sign_message() {
 
 //////////////////////////////////////////////////////////////////////
 
+UX_STEP_NOCB(
+    ux_signer_step,
+    bnnn_paging,
+    {
+      .title = "Sign with key",
+      .text = derivationPathText,
+    });
 UX_STEP_NOCB(
     ux_display_message_flow_0_step,
     bnnn_paging,
@@ -86,6 +96,7 @@ UX_STEP_VALID(
     });
 
 UX_FLOW(ux_display_message,
+  &ux_signer_step,
   &ux_display_message_flow_0_step,
   &ux_fee_payer_step,
   &ux_display_message_flow_1_step,
@@ -93,6 +104,7 @@ UX_FLOW(ux_display_message,
 );
 
 UX_FLOW(ux_transfer_message,
+  &ux_signer_step,
   &ux_transfer_message_flow_0_step,
   &ux_transfer_message_flow_1_step,
   &ux_transfer_message_flow_2_step,
@@ -109,6 +121,15 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     int derivationPathLength = read_derivation_path(dataBuffer, dataLength, derivationPath);
     dataBuffer += 1 + derivationPathLength * 4;
     dataLength -= 1 + derivationPathLength * 4;
+    if (derivationPathLength > 2) {
+        uint32_t n = derivationPath[2] & ~0x80000000;
+        snprintf(derivationPathText, DERIVATION_PATH_TEXT_SIZE, "at path %u", n);
+        for (int i = 3; i < derivationPathLength; i++) {
+           uint32_t n = derivationPath[i] & ~0x80000000;
+	   int len = strlen(derivationPathText);
+           snprintf(derivationPathText + len, DERIVATION_PATH_TEXT_SIZE, "/%u", n);
+        }
+    }
 
     cx_ecfp_private_key_t privateKey;
     derive_private_key(&privateKey, derivationPath, derivationPathLength);

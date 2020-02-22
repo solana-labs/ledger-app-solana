@@ -95,7 +95,7 @@ mod tests {
         let (ledger, ledger_base_pubkey) = get_ledger();
 
         let derivation_path = DerivationPath {
-            account: 12345,
+            account: 1,
             change: None,
         };
 
@@ -108,6 +108,11 @@ mod tests {
         assert!(signature.verify(&from.as_ref(), &message));
 
         // Test large transaction
+        let derivation_path = DerivationPath {
+            account: 12345,
+            change: Some(678),
+        };
+        let from = ledger.get_pubkey(&derivation_path).expect("get pubkey");
         let recipients: Vec<(Pubkey, u64)> = (0..4).map(|_| (Pubkey::new_rand(), 42)).collect();
         let instructions = system_instruction::transfer_many(&from, &recipients);
         let message = Message::new(instructions).serialize();

@@ -122,6 +122,10 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
 
     int messageLength = U2BE(dataBuffer, 0);
     dataBuffer += 2;
+
+    if (G_messageLength + messageLength > MAX_MESSAGE_LENGTH) {
+        THROW(EXCEPTION_OVERFLOW);
+    }
     os_memmove(G_message + G_messageLength, dataBuffer, messageLength);
     G_messageLength += messageLength;
 

@@ -7,13 +7,13 @@
 #include "printer.h"
 #include "system_instruction.h"
 
-static char messageHash[BASE58_HASH_LENGTH];
-static char feePayer[BASE58_PUBKEY_LENGTH];
-static char senderPubkey[BASE58_PUBKEY_LENGTH];
-static char recipientPubkey[BASE58_PUBKEY_LENGTH];
+static char G_messageHashText[BASE58_HASH_LENGTH];
+static char G_feePayerText[BASE58_PUBKEY_LENGTH];
+static char G_senderText[BASE58_PUBKEY_LENGTH];
+static char G_recipientText[BASE58_PUBKEY_LENGTH];
 
 #define MESSAGE_TRANSFER_SIZE 32
-static char messageTransfer[MESSAGE_TRANSFER_SIZE];
+static char G_transferText[MESSAGE_TRANSFER_SIZE];
 
 #define SUMMARY_LENGTH 7
 
@@ -46,35 +46,35 @@ UX_STEP_NOCB(
     bnnn_paging,
     {
       .title = "Message Hash",
-      .text = messageHash,
+      .text = G_messageHashText,
     });
 UX_STEP_NOCB(
     ux_transfer_message_flow_0_step,
     bnnn_paging,
     {
       .title = "Transfer",
-      .text = messageTransfer,
+      .text = G_transferText,
     });
 UX_STEP_NOCB(
     ux_transfer_message_flow_1_step,
     bnnn_paging,
     {
       .title = "Sender",
-      .text = senderPubkey,
+      .text = G_senderText,
     });
 UX_STEP_NOCB(
     ux_transfer_message_flow_2_step,
     bnnn_paging,
     {
       .title = "Recipient",
-      .text = recipientPubkey,
+      .text = G_recipientText,
     });
 UX_STEP_NOCB(
     ux_fee_payer_step,
     bnnn_paging,
     {
       .title = "Fee paid by",
-      .text = feePayer,
+      .text = G_feePayerText,
     });
 UX_STEP_VALID(
     ux_display_message_flow_1_step,
@@ -147,13 +147,13 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     uint8_t messageHashBytes[HASH_LENGTH];
     cx_hash_sha256(dataBuffer, dataLength, messageHashBytes, HASH_LENGTH);
 
-    int len = encodeBase58(messageHashBytes, HASH_LENGTH, (uint8_t*) messageHash, BASE58_HASH_LENGTH);
-    messageHash[len] = '\0';
+    int len = encodeBase58(messageHashBytes, HASH_LENGTH, (uint8_t*) G_messageHashText, BASE58_HASH_LENGTH);
+    G_messageHashText[len] = '\0';
 
     char pubkeyBuffer[BASE58_PUBKEY_LENGTH];
     len = encodeBase58((uint8_t*) &header.pubkeys[0], PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
     pubkeyBuffer[len] = '\0';
-    print_summary(pubkeyBuffer, feePayer, SUMMARY_LENGTH, SUMMARY_LENGTH);
+    print_summary(pubkeyBuffer, G_feePayerText, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
     if (p1 == P1_NON_CONFIRM) {
         // Uncomment this to allow blind signing.
@@ -163,22 +163,22 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
         sendResponse(0, false);
     } else {
         if (system_transfer_err == 0) {
-            print_amount(info.lamports, "SOL", messageTransfer); // MESSAGE_TRANSFER_SIZE
+            print_amount(info.lamports, "SOL", G_transferText); // MESSAGE_TRANSFER_SIZE
 
             len = encodeBase58((uint8_t*) info.from, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
             pubkeyBuffer[len] = '\0';
-            print_summary(pubkeyBuffer, senderPubkey, SUMMARY_LENGTH, SUMMARY_LENGTH);
+            print_summary(pubkeyBuffer, G_senderText, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
             len = encodeBase58((uint8_t*) info.to, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
             pubkeyBuffer[len] = '\0';
-            print_summary(pubkeyBuffer, recipientPubkey, SUMMARY_LENGTH, SUMMARY_LENGTH);
+            print_summary(pubkeyBuffer, G_recipientText, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
             if (memcmp(&header.pubkeys[0], info.to, PUBKEY_SIZE) == 0) {
-                snprintf(feePayer, BASE58_PUBKEY_LENGTH, "recipient");
+                snprintf(G_feePayerText, BASE58_PUBKEY_LENGTH, "recipient");
             }
 
             if (memcmp(&header.pubkeys[0], info.from, PUBKEY_SIZE) == 0) {
-                snprintf(feePayer, BASE58_PUBKEY_LENGTH, "sender");
+                snprintf(G_feePayerText, BASE58_PUBKEY_LENGTH, "sender");
             }
 
             ux_flow_init(0, ux_transfer_message, NULL);

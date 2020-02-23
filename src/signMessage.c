@@ -115,11 +115,11 @@ static int process_message_body(uint8_t* message_body, int message_body_length, 
         print_amount(transfer_info.lamports, "SOL", fields[0].text);
 
         strcpy(fields[1].title, "Sender");
-        encodeBase58((uint8_t*) transfer_info.from, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+        encode_base58((uint8_t*) transfer_info.from, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
         print_summary(pubkeyBuffer, fields[1].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
         strcpy(fields[2].title, "Recipient");
-        encodeBase58((uint8_t*) transfer_info.to, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+        encode_base58((uint8_t*) transfer_info.to, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
         print_summary(pubkeyBuffer, fields[2].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
         if (memcmp(&header->pubkeys[0], transfer_info.to, PUBKEY_SIZE) == 0) {
@@ -142,15 +142,15 @@ static int process_message_body(uint8_t* message_body, int message_body_length, 
     DelegateStakeInfo delegate_info;
     if (parse_delegate_stake_instructions(&parser, header, &delegate_info) == 0) {
         strcpy(fields[0].title, "Delegate from");
-        encodeBase58((uint8_t*) delegate_info.stake_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+        encode_base58((uint8_t*) delegate_info.stake_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
         print_summary(pubkeyBuffer, fields[0].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
         strcpy(fields[1].title, "Authorized by");
-        encodeBase58((uint8_t*) delegate_info.authorized_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+        encode_base58((uint8_t*) delegate_info.authorized_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
         print_summary(pubkeyBuffer, fields[1].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
         strcpy(fields[2].title, "Vote account");
-        encodeBase58((uint8_t*) delegate_info.vote_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+        encode_base58((uint8_t*) delegate_info.vote_pubkey, PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
         print_summary(pubkeyBuffer, fields[2].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
         if (memcmp(&header->pubkeys[0], delegate_info.authorized_pubkey, PUBKEY_SIZE) == 0) {
@@ -206,7 +206,7 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
 
     // Set fee payer text
     char pubkeyBuffer[BASE58_PUBKEY_LENGTH];
-    encodeBase58((uint8_t*) &header.pubkeys[0], PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
+    encode_base58((uint8_t*) &header.pubkeys[0], PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
     print_summary(pubkeyBuffer, G_fields[3].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
     if (process_message_body(parser.buffer, parser.buffer_length, &header, G_fields)) {
@@ -217,7 +217,7 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
         cx_hash_sha256(dataBuffer, dataLength, messageHashBytes, HASH_LENGTH);
 
         strcpy(G_fields[1].title, "Message Hash");
-        encodeBase58(messageHashBytes, HASH_LENGTH, (uint8_t*) G_fields[1].text, BASE58_HASH_LENGTH);
+        encode_base58(messageHashBytes, HASH_LENGTH, (uint8_t*) G_fields[1].text, BASE58_HASH_LENGTH);
 
         ux_flow_init(0, ux_3_fields, NULL);
     }

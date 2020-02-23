@@ -2,7 +2,7 @@
 #include "os.h"
 #include "ux.h"
 #include "utils.h"
-#include "printer.h"
+#include "sol/printer.h"
 
 static uint8_t publicKey[PUBKEY_LENGTH];
 static char publicKeyStr[BASE58_PUBKEY_LENGTH];

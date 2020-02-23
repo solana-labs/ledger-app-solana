@@ -1,5 +1,6 @@
-#include "parser.h"
-#include "printer.h"
+#include "sol/parser.h"
+#include "sol/printer.h"
+#include "sol/message.h"
 #include "system_instruction.h"
 #include "stake_instruction.h"
 #include <string.h>

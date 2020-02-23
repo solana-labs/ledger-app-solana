@@ -3,11 +3,9 @@
 #include "ux.h"
 #include "cx.h"
 #include "utils.h"
-#include "parser.h"
-#include "printer.h"
-#include "system_instruction.h"
-#include "stake_instruction.h"
-#include "sol_message.h"
+#include "sol/parser.h"
+#include "sol/printer.h"
+#include "sol/message.h"
 
 static field_t G_fields[4];
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parser.h"
+#include "sol/parser.h"
 
 enum SystemInstructionKind {
     CreateAccount,

@@ -1,4 +1,4 @@
-# Ledger Solana app
+# Solana app for Ledger Wallet
 
 ## Overview
 

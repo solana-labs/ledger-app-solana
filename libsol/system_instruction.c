@@ -2,7 +2,6 @@
 #include "sol/printer.h"
 #include "system_instruction.h"
 #include <string.h>
-#include <stdio.h>
 
 #define BAIL_IF(x) {int err = x; if (err) return err;}
 
@@ -61,11 +60,11 @@ int print_system_transfer_info(SystemTransferInfo* info, MessageHeader* header, 
     print_summary(pubkey_buffer, fields[2].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
     if (memcmp(&header->pubkeys[0], info->to, PUBKEY_SIZE) == 0) {
-        snprintf(fields[3].text, BASE58_PUBKEY_LENGTH, "recipient");
+        strcpy(fields[3].text, "recipient");
     }
 
     if (memcmp(&header->pubkeys[0], info->from, PUBKEY_SIZE) == 0) {
-        snprintf(fields[3].text, BASE58_PUBKEY_LENGTH, "sender");
+        strcpy(fields[3].text, "sender");
     }
 
     *fields_used = 4;

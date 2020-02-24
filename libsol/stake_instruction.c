@@ -2,7 +2,6 @@
 #include "sol/printer.h"
 #include "stake_instruction.h"
 #include <string.h>
-#include <stdio.h>
 
 #define BAIL_IF(x) {int err = x; if (err) return err;}
 
@@ -87,7 +86,7 @@ int print_delegate_stake_info(DelegateStakeInfo* info, MessageHeader* header, fi
     print_summary(pubkey_buffer, fields[2].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
     if (memcmp(&header->pubkeys[0], info->authorized_pubkey, PUBKEY_SIZE) == 0) {
-        snprintf(fields[3].text, BASE58_PUBKEY_LENGTH, "authorizer");
+        strcpy(fields[3].text, "authorizer");
     }
 
     *fields_used = 4;

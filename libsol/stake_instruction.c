@@ -28,17 +28,17 @@ static int parse_delegate_stake_instruction(Instruction* instruction, Pubkey* pu
 
     pubkeys_index = instruction->accounts[accounts_index++];
     BAIL_IF(pubkeys_index >= pubkeys_length);
-    Pubkey* pubkey = &pubkeys[pubkeys_index];
+    //Pubkey* pubkey = &pubkeys[pubkeys_index];
     //BAIL_IF(memcmp(pubkey, &clock_pubkey, PUBKEY_SIZE));
 
     pubkeys_index = instruction->accounts[accounts_index++];
     BAIL_IF(pubkeys_index >= pubkeys_length);
-    pubkey = &pubkeys[pubkeys_index];
+    //pubkey = &pubkeys[pubkeys_index];
     //BAIL_IF(memcmp(pubkey, &stake_history_pubkey, PUBKEY_SIZE));
 
     pubkeys_index = instruction->accounts[accounts_index++];
     BAIL_IF(pubkeys_index >= pubkeys_length);
-    pubkey = &pubkeys[pubkeys_index];
+    //pubkey = &pubkeys[pubkeys_index];
     //BAIL_IF(memcmp(pubkey, &config_pubkey, PUBKEY_SIZE));
 
     pubkeys_index = instruction->accounts[accounts_index++];

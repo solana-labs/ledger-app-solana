@@ -2,6 +2,8 @@
 
 #include "sol/parser.h"
 
+extern const Pubkey system_program_id;
+
 enum SystemInstructionKind {
     CreateAccount,
     Assign,

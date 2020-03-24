@@ -2,6 +2,8 @@
 
 #include "sol/parser.h"
 
+extern const Pubkey stake_program_id;
+
 enum StakeInstructionKind {
     Initialize,
     Authorize,

@@ -58,16 +58,8 @@ static int parse_delegate_stake_instruction(Instruction* instruction, Pubkey* pu
 
 // Returns 0 and populates DelegateStakeInfo if provided a MessageHeader and a delegate
 // instruction, otherwise non-zero.
-int parse_delegate_stake_instructions(Parser* parser, MessageHeader* header, DelegateStakeInfo* info) {
-    BAIL_IF(header->instructions_length != 1);
-
-    Instruction instruction;
-    BAIL_IF(parse_instruction(parser, &instruction));
-
-    Pubkey* program_id = &header->pubkeys[instruction.program_id_index];
-    BAIL_IF(memcmp(program_id, &stake_program_id, PUBKEY_SIZE));
-
-    BAIL_IF(parse_delegate_stake_instruction(&instruction, header->pubkeys, header->pubkeys_header.pubkeys_length, info));
+int parse_delegate_stake_instructions(Parser* parser, Instruction* instruction, MessageHeader* header, DelegateStakeInfo* info) {
+    BAIL_IF(parse_delegate_stake_instruction(instruction, header->pubkeys, header->pubkeys_header.pubkeys_length, info));
 
     return 0;
 }

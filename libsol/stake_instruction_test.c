@@ -11,8 +11,8 @@ void test_parse_delegate_stake_instructions() {
     Instruction instruction;
     assert(parse_instruction(&parser, &instruction) == 0);
 
-    DelegateStakeInfo info;
-    assert(parse_delegate_stake_instructions(&parser, &instruction, &header, &info) == 0);
+    StakeInfo info;
+    assert(parse_stake_instructions(&instruction, &header, &info) == 0);
     assert(parser.buffer_length == 0);
 }
 

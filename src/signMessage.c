@@ -160,6 +160,9 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     case 4:
         ux_flow_init(0, ux_4_fields, NULL);
         break;
+    default:
+        THROW(0x6f00);
+        return;
     }
 
     *flags |= IO_ASYNCH_REPLY;

@@ -140,7 +140,7 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     encode_base58((uint8_t*) &header.pubkeys[0], PUBKEY_LENGTH, (uint8_t*) pubkeyBuffer, BASE58_PUBKEY_LENGTH);
     print_summary(pubkeyBuffer, G_fields[3].text, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
-    size_t fieldsUsed;
+    size_t fieldsUsed = 0;
     if (process_message_body(parser.buffer, parser.buffer_length, &header, G_fields, &fieldsUsed)) {
         strcpy(G_fields[0].title, "Unrecognized");
         strcpy(G_fields[0].text, "format");

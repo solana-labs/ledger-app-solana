@@ -17,21 +17,19 @@ The application interface can be accessed over HID or BLE
 
 #### Description
 
-This command returns specific application configuration
+_This command returns specific application configuration_
 
-#### Coding
-
-###### Command
+##### Command
 
 | *CLA*         | *INS*         | *P1*  | *P2*          | *Lc*          | *Le*   |
 | ------------- |:-------------:| -----:| ------------- |:-------------:| -----: |
 | E0            | 01            | 00    | 00            | 00            | 04     |
 
-###### Input data
+##### Input data
 
-None
+_None_
 
-###### Output data
+##### Output data
 
 
 | *Description*                                                                     | *Length*
@@ -47,11 +45,9 @@ None
 
 #### Description
 
-This command returns a Solana pubkey for the given BIP 32 path
+_This command returns a Solana pubkey for the given BIP 32 path_
 
-#### Coding
-
-###### Command
+##### Command
 
 | *CLA*         | *INS*         | *P1*  | *P2*          | *Lc*          | *Le*   |
 | ------------- |:-------------:| -----:| ------------- |:-------------:| -----: |
@@ -59,7 +55,7 @@ This command returns a Solana pubkey for the given BIP 32 path
 
 
 
-###### Input data
+##### Input data
 
 
 | *Description*                                                                     | *Length*
@@ -69,7 +65,7 @@ This command returns a Solana pubkey for the given BIP 32 path
 | ...                                                                               | 4
 | Last derivation index (big endian)                                                | 4
 
-###### Output data
+##### Output data
 
 
 | *Description*                                                                     | *Length*
@@ -81,16 +77,14 @@ This command returns a Solana pubkey for the given BIP 32 path
 
 #### Description
 
-This command signs a Solana System transfer after having the user validate the following parameters
+_This command signs a Solana System transfer after having the user validate the following parameters:_
 
-  - Amount
-  - Sender pubkey
-  - Recipient pubkey
-  - Fee payer
+  * Amount
+  * Sender pubkey
+  * Recipient pubkey
+  * Fee payer
 
-#### Coding
-
-###### Command
+##### Command
 
 
 | *CLA* | *INS*  | *P1*               | *P2*       | *Lc*     | *Le*
@@ -98,7 +92,7 @@ This command signs a Solana System transfer after having the user validate the f
 |   E0  |   03   |  01                |   00       | variable | variable
 
 
-###### Input data
+##### Input data
 
 
 | *Description*                                                                     | *Length*
@@ -109,7 +103,7 @@ This command signs a Solana System transfer after having the user validate the f
 | Last derivation index (big endian)                                                | 4
 | Serialized transaction                                                            | variable
 
-###### Output data
+##### Output data
 
 
 | *Description*                                                                     | *Length*
@@ -121,9 +115,9 @@ This command signs a Solana System transfer after having the user validate the f
 
 ### General transport description
 
-Ledger APDUs requests and responses are encapsulated using a flexible protocol allowing to fragment large payloads over different underlying transport mechanisms.
+_Ledger APDUs requests and responses are encapsulated using a flexible protocol allowing to fragment large payloads over different underlying transport mechanisms._
 
-The common transport header is defined as follows :
+The common transport header is defined as follows:
 
 
 | *Description*                                                                     | *Length*
@@ -195,7 +189,7 @@ Requests are encoded using the standard BLE 20 bytes MTU size
 
 The following standard Status Words are returned for all APDUs - some specific Status Words can be used for specific commands and are mentioned in the command description.
 
-###### Status Words
+##### Status Words
 
 | *SW*     | *Description*
 | ------------- |:-------------:|

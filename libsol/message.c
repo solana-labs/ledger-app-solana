@@ -58,7 +58,7 @@ int process_message_body(uint8_t* message_body, int message_body_length, Message
     if (instruction_count > 1) {
         InstructionBrief nonce_brief = SYSTEM_IX_BRIEF(AdvanceNonceAccount);
         if (instruction_info_matches_brief(info, &nonce_brief)) {
-            print_system_nonced_transaction_sentinel(&info->system, header, fields, fields_used);
+            print_system_nonced_transaction_sentinel(&info->system, header);
             operative_ix++;
             instruction_count--;
             info = &instruction_info[operative_ix];
@@ -69,7 +69,7 @@ int process_message_body(uint8_t* message_body, int message_body_length, Message
         case 1:
             switch (info->kind) {
                 case ProgramIdSystem:
-                    return print_system_info(&info->system, header, fields, fields_used);
+                    return print_system_info(&info->system, header);
                 case ProgramIdStake:
                     return print_stake_info(&info->stake, header, fields, fields_used);
                 case ProgramIdUnknown:

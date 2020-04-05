@@ -1,6 +1,5 @@
 #include "instruction.h"
 #include "sol/parser.h"
-#include "sol/printer.h"
 #include "sol/message.h"
 #include "system_instruction.h"
 #include "stake_instruction.h"
@@ -9,7 +8,7 @@
 
 #define MAX_INSTRUCTIONS 2
 
-int process_message_body(uint8_t* message_body, int message_body_length, MessageHeader* header, field_t* fields, size_t* fields_used) {
+int process_message_body(uint8_t* message_body, int message_body_length, MessageHeader* header) {
     BAIL_IF(header->instructions_length == 0);
     BAIL_IF(header->instructions_length > MAX_INSTRUCTIONS);
 
@@ -71,7 +70,7 @@ int process_message_body(uint8_t* message_body, int message_body_length, Message
                 case ProgramIdSystem:
                     return print_system_info(&info->system, header);
                 case ProgramIdStake:
-                    return print_stake_info(&info->stake, header, fields, fields_used);
+                    return print_stake_info(&info->stake, header);
                 case ProgramIdUnknown:
                     break;
             }
@@ -80,6 +79,5 @@ int process_message_body(uint8_t* message_body, int message_body_length, Message
             break;
     }
 
-    *fields_used = 0;
     return 1;
 }

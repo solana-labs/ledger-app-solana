@@ -8,8 +8,6 @@
 #include "sol/message.h"
 #include "sol/transaction_summary.h"
 
-static field_t G_fields[6];
-
 static uint8_t G_message[MAX_MESSAGE_LENGTH];
 static int G_messageLength;
 static uint32_t G_derivationPath[BIP32_PATH];
@@ -34,48 +32,6 @@ static uint8_t set_result_sign_message() {
 
 //////////////////////////////////////////////////////////////////////
 
-UX_STEP_NOCB(
-    ux_instruction_step,
-    bnnn_paging,
-    {
-      .title = G_fields[0].title,
-      .text = G_fields[0].text,
-    });
-UX_STEP_NOCB(
-    ux_sender_step,
-    bnnn_paging,
-    {
-      .title = G_fields[1].title,
-      .text = G_fields[1].text,
-    });
-UX_STEP_NOCB(
-    ux_recipient_step,
-    bnnn_paging,
-    {
-      .title = G_fields[2].title,
-      .text = G_fields[2].text,
-    });
-UX_STEP_NOCB(
-    ux_fee_payer_step,
-    bnnn_paging,
-    {
-      .title = "Fee paid by",
-      .text = G_fields[3].text,
-    });
-UX_STEP_NOCB(
-    ux_nonce_account_step,
-    bnnn_paging,
-    {
-      .title = "Nonce account",
-      .text = G_fields[4].text,
-    });
-UX_STEP_NOCB(
-    ux_nonce_authority_step,
-    bnnn_paging,
-    {
-      .title = "Nonce authority",
-      .text = G_fields[5].text,
-    });
 UX_STEP_VALID(
     ux_approve_step,
     pb,
@@ -92,35 +48,6 @@ UX_STEP_VALID(
       &C_icon_crossmark,
       "Reject",
     });
-
-UX_FLOW(ux_3_fields,
-  &ux_instruction_step,
-  &ux_sender_step,
-  &ux_fee_payer_step,
-  &ux_approve_step,
-  &ux_reject_step
-);
-
-UX_FLOW(ux_4_fields,
-  &ux_instruction_step,
-  &ux_sender_step,
-  &ux_recipient_step,
-  &ux_fee_payer_step,
-  &ux_approve_step,
-  &ux_reject_step
-);
-
-UX_FLOW(ux_6_fields,
-  &ux_instruction_step,
-  &ux_sender_step,
-  &ux_recipient_step,
-  &ux_fee_payer_step,
-  &ux_nonce_account_step,
-  &ux_nonce_authority_step,
-  &ux_approve_step,
-  &ux_reject_step
-);
-
 UX_STEP_NOCB_INIT(
     ux_summary_step,
     paging,
@@ -186,15 +113,9 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
         sendResponse(0, false);
     }
 
-    // Set fee payer text
-    char pubkeyBuffer[BASE58_PUBKEY_LENGTH];
-    encode_base58(&header.pubkeys[0], PUBKEY_LENGTH, pubkeyBuffer, BASE58_PUBKEY_LENGTH);
-    print_summary(pubkeyBuffer, G_fields[3].text, BASE58_PUBKEY_SHORT, SUMMARY_LENGTH, SUMMARY_LENGTH);
-
-    size_t fieldsUsed = 0;
     SummaryItem* item;
     transaction_summary_reset();
-    if (process_message_body(parser.buffer, parser.buffer_length, &header, G_fields, &fieldsUsed)) {
+    if (process_message_body(parser.buffer, parser.buffer_length, &header)) {
         item = transaction_summary_primary_item();
         summary_item_set_string(item, "Unrecognized", "format");
 
@@ -226,20 +147,8 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
 
         ux_flow_init(0, flow_steps, NULL);
     } else {
-        switch (fieldsUsed) {
-        case 3:
-            ux_flow_init(0, ux_3_fields, NULL);
-            break;
-        case 4:
-            ux_flow_init(0, ux_4_fields, NULL);
-            break;
-        case 6:
-            ux_flow_init(0, ux_6_fields, NULL);
-            break;
-        default:
-            THROW(0x6f00);
-            return;
-        }
+        THROW(0x6f00);
+        return;
     }
 
     *flags |= IO_ASYNCH_REPLY;

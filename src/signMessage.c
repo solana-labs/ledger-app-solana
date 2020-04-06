@@ -6,6 +6,7 @@
 #include "sol/parser.h"
 #include "sol/printer.h"
 #include "sol/message.h"
+#include "sol/transaction_summary.h"
 
 static field_t G_fields[6];
 
@@ -120,6 +121,31 @@ UX_FLOW(ux_6_fields,
   &ux_reject_step
 );
 
+UX_STEP_NOCB_INIT(
+    ux_summary_step,
+    paging,
+    {
+        size_t step_index = G_ux.flow_stack[stack_slot].index;
+        if (transaction_summary_display_item(step_index)) {
+            THROW(0x6f01);
+        }
+    },
+    {
+        .title = G_transaction_summary_title,
+        .text = G_transaction_summary_text,
+    }
+);
+
+#define MAX_FLOW_STEPS ( \
+    MAX_TRANSACTION_SUMMARY_ITEMS   \
+    + 1     /* approve */           \
+    + 1     /* reject */            \
+    + 1     /* FLOW_END_STEP */     \
+)
+ux_flow_step_t const * flow_steps[MAX_FLOW_STEPS];
+
+Hash UnrecognizedMessageHash;
+
 void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dataLength, volatile unsigned int *flags, volatile unsigned int *tx) {
     if ((p2 & P2_EXTEND) == 0) {
         MEMCLEAR(G_derivationPath);
@@ -166,31 +192,54 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     print_summary(pubkeyBuffer, G_fields[3].text, BASE58_PUBKEY_SHORT, SUMMARY_LENGTH, SUMMARY_LENGTH);
 
     size_t fieldsUsed = 0;
+    SummaryItem* item;
+    transaction_summary_reset();
     if (process_message_body(parser.buffer, parser.buffer_length, &header, G_fields, &fieldsUsed)) {
-        strcpy(G_fields[0].title, "Unrecognized");
-        strcpy(G_fields[0].text, "format");
+        item = transaction_summary_primary_item();
+        summary_item_set_string(item, "Unrecognized", "format");
 
-        uint8_t messageHashBytes[HASH_LENGTH];
-        cx_hash_sha256(dataBuffer, dataLength, messageHashBytes, HASH_LENGTH);
+        cx_hash_sha256(dataBuffer, dataLength, (uint8_t*) &UnrecognizedMessageHash, HASH_LENGTH);
 
-        strcpy(G_fields[1].title, "Message Hash");
-        encode_base58(messageHashBytes, HASH_LENGTH, G_fields[1].text, BASE58_PUBKEY_LENGTH);
-        fieldsUsed = 3;
+        item = transaction_summary_general_item();
+        summary_item_set_hash(item, "Message Hash", &UnrecognizedMessageHash);
     }
 
-    switch (fieldsUsed) {
-    case 3:
-        ux_flow_init(0, ux_3_fields, NULL);
-        break;
-    case 4:
-        ux_flow_init(0, ux_4_fields, NULL);
-        break;
-    case 6:
-        ux_flow_init(0, ux_6_fields, NULL);
-        break;
-    default:
-        THROW(0x6f00);
-        return;
+    // Set fee-payer if it hasn't already been resolved by
+    // the transaction printer
+    item = transaction_summary_fee_payer_item();
+    if (item != NULL) {
+        summary_item_set_pubkey(item, "Fee payer", &header.pubkeys[0]);
+    }
+
+    enum SummaryItemKind summary_step_kinds[MAX_TRANSACTION_SUMMARY_ITEMS];
+    size_t num_summary_steps = 0;
+    if (transaction_summary_finalize(summary_step_kinds, &num_summary_steps) == 0) {
+        size_t num_flow_steps = 0;
+
+        for (size_t i = 0; i < num_summary_steps; i++) {
+            flow_steps[num_flow_steps++] = &ux_summary_step;
+        }
+
+        flow_steps[num_flow_steps++] = &ux_approve_step;
+        flow_steps[num_flow_steps++] = &ux_reject_step;
+        flow_steps[num_flow_steps++] = FLOW_END_STEP;
+
+        ux_flow_init(0, flow_steps, NULL);
+    } else {
+        switch (fieldsUsed) {
+        case 3:
+            ux_flow_init(0, ux_3_fields, NULL);
+            break;
+        case 4:
+            ux_flow_init(0, ux_4_fields, NULL);
+            break;
+        case 6:
+            ux_flow_init(0, ux_6_fields, NULL);
+            break;
+        default:
+            THROW(0x6f00);
+            return;
+        }
     }
 
     *flags |= IO_ASYNCH_REPLY;

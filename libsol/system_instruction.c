@@ -110,9 +110,9 @@ static int print_system_transfer_info(SystemTransferInfo* info, MessageHeader* h
 
     item = transaction_summary_fee_payer_item();
     if (memcmp(&header->pubkeys[0], info->to, PUBKEY_SIZE) == 0) {
-        summary_item_set_string(item, "Fee Payer", "recipient");
+        transaction_summary_set_fee_payer_string("recipient");
     } else if (memcmp(&header->pubkeys[0], info->from, PUBKEY_SIZE) == 0) {
-        summary_item_set_string(item, "Fee Payer", "sender");
+        transaction_summary_set_fee_payer_string("sender");
     }
 
     return 0;
@@ -129,7 +129,7 @@ static int print_system_advance_nonce_account(SystemAdvanceNonceInfo* info, Mess
 
     item = transaction_summary_fee_payer_item();
     if (memcmp(&header->pubkeys[0], info->authority, PUBKEY_SIZE) == 0) {
-        summary_item_set_string(item, "Fee Payer", "authority");
+        transaction_summary_set_fee_payer_string("authority");
     }
 
     return 0;

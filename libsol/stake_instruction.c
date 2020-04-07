@@ -98,7 +98,7 @@ static int print_delegate_stake_info(DelegateStakeInfo* info, MessageHeader* hea
 
     item = transaction_summary_fee_payer_item();
     if (memcmp(&header->pubkeys[0], info->authorized_pubkey, PUBKEY_SIZE) == 0) {
-        summary_item_set_string(item, "Fee payer", "authorizer");
+        transaction_summary_set_fee_payer_string("authorizer");
     }
 
     return 0;

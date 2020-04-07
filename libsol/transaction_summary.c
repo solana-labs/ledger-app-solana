@@ -100,6 +100,21 @@ SummaryItem* transaction_summary_general_item() {
     return NULL;
 }
 
+#define FEE_PAYER_TITLE "Fee payer"
+int transaction_summary_set_fee_payer_pubkey(Pubkey* pubkey) {
+    SummaryItem* item = transaction_summary_fee_payer_item();
+    BAIL_IF(item == NULL);
+    summary_item_set_pubkey(item, FEE_PAYER_TITLE, pubkey);
+    return 0;
+}
+
+int transaction_summary_set_fee_payer_string(const char* string) {
+    SummaryItem* item = transaction_summary_fee_payer_item();
+    BAIL_IF(item == NULL);
+    summary_item_set_string(item, FEE_PAYER_TITLE, string);
+    return 0;
+}
+
 static int transaction_summary_update_display_for_item(const SummaryItem* item) {
     switch (item->kind) {
         case SummaryItemNone:

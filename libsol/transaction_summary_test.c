@@ -273,7 +273,7 @@ void test_repro_unrecognized_format_reverse_nav_hash_corruption_bug() {
     SummaryItem* item;
     const char* primary_title = "Unrecognized";
     const char* primary_text = "format";
-    const char* fee_payer_title = "Fee payer";
+    const char* fee_payer_title = FEE_PAYER_TITLE;
     const char* fee_payer_text = "1111111..1111111";
     Pubkey fee_payer = {{
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

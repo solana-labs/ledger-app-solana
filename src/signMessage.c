@@ -113,10 +113,9 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
         sendResponse(0, false);
     }
 
-    SummaryItem* item;
     transaction_summary_reset();
     if (process_message_body(parser.buffer, parser.buffer_length, &header)) {
-        item = transaction_summary_primary_item();
+        SummaryItem* item = transaction_summary_primary_item();
         summary_item_set_string(item, "Unrecognized", "format");
 
         cx_hash_sha256(dataBuffer, dataLength, (uint8_t*) &UnrecognizedMessageHash, HASH_LENGTH);
@@ -127,10 +126,7 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
 
     // Set fee-payer if it hasn't already been resolved by
     // the transaction printer
-    item = transaction_summary_fee_payer_item();
-    if (item != NULL) {
-        summary_item_set_pubkey(item, "Fee payer", &header.pubkeys[0]);
-    }
+    transaction_summary_set_fee_payer_pubkey(&header.pubkeys[0]);
 
     enum SummaryItemKind summary_step_kinds[MAX_TRANSACTION_SUMMARY_ITEMS];
     size_t num_summary_steps = 0;

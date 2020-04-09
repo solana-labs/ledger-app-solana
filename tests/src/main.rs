@@ -279,7 +279,7 @@ fn test_create_stake_account_with_seed_and_nonce() {
     assert!(signature.verify(&from.as_ref(), &message));
 }
 
-fn test_create_stake_full_shred_tx() {
+fn test_sign_full_shred_of_garbage_tx() {
     let (ledger, _ledger_base_pubkey) = get_ledger();
 
     let derivation_path = DerivationPath {
@@ -317,5 +317,5 @@ fn main() {
     test_ledger_delegate_stake_with_nonce();
     test_ledger_transfer_with_nonce();
     test_create_stake_account_with_seed_and_nonce();
-    test_create_stake_full_shred_tx();
+    test_sign_full_shred_of_garbage_tx();
 }

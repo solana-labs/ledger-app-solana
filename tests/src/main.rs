@@ -465,7 +465,36 @@ fn test_create_vote_account_with_seed() {
     assert!(signature.verify(&from.as_ref(), &message));
 }
 
+// This test requires interactive approval of message signing on the ledger.
+fn test_nonce_withdraw() {
+    let (ledger, ledger_base_pubkey) = get_ledger();
+
+    let derivation_path = DerivationPath {
+        account: Some(12345),
+        change: None,
+    };
+
+    let nonce_account = ledger_base_pubkey;
+    let nonce_authority = ledger
+        .get_pubkey(&derivation_path, false)
+        .expect("get pubkey");
+    let to = Pubkey::new(&[1u8; 32]);
+    let instruction = system_instruction::withdraw_nonce_account(
+        &nonce_account,
+        &nonce_authority,
+        &to,
+        42,
+    );
+    let message = Message::new(vec![instruction]).serialize();
+    println!("nonce: {:?}", message);
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&nonce_authority.as_ref(), &message));
+}
+
 fn main() {
+    test_nonce_withdraw();
     test_create_vote_account();
     test_create_vote_account_with_seed();
     test_create_nonce_account();

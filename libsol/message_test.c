@@ -389,6 +389,30 @@ void test_process_message_body_nonce_withdraw() {
     process_message_body_and_sanity_check(message, sizeof(message), 5);
 }
 
+void test_process_message_body_stake_withdraw() {
+    uint8_t message[] = {
+        1, 1, 3,
+        6,
+            18, 67, 85, 168, 124, 173, 88, 142, 77, 171, 80, 178, 8, 218, 230, 68, 85, 231, 39, 54, 184, 42, 162, 85, 172, 139, 54, 173, 194, 7, 64, 250,
+            112, 173, 25, 161, 89, 143, 220, 223, 128, 33, 149, 41, 12, 152, 202, 202, 203, 163, 182, 246, 158, 15, 22, 77, 171, 71, 63, 249, 10, 117, 172, 52,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            6, 167, 213, 23, 24, 199, 116, 201, 40, 86, 99, 152, 105, 29, 94, 182, 139, 94, 184, 163, 155, 75, 109, 92, 115, 85, 91, 33, 0, 0, 0, 0,
+            6, 167, 213, 23, 25, 53, 132, 208, 254, 237, 155, 179, 67, 29, 19, 32, 107, 229, 68, 40, 27, 87, 184, 86, 108, 197, 55, 95, 244, 0, 0, 0,
+            6, 161, 216, 23, 145, 55, 84, 42, 152, 52, 55, 189, 254, 42, 122, 178, 85, 127, 83, 92, 138, 120, 114, 43, 104, 164, 157, 192, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1,
+            // stake - withdraw
+            5,
+            5,
+                1, 2, 3, 4, 0,
+            12,
+                4, 0, 0, 0,
+                42, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    process_message_body_and_sanity_check(message, sizeof(message), 5);
+}
+
 int main() {
     test_process_message_body_ok();
     test_process_message_body_too_few_ix_fail();
@@ -406,6 +430,7 @@ int main() {
     test_process_message_body_create_vote_account_with_seed();
     test_process_message_body_create_vote_account();
     test_process_message_body_nonce_withdraw();
+    test_process_message_body_stake_withdraw();
 
     printf("passed\n");
     return 0;

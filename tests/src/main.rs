@@ -493,7 +493,36 @@ fn test_nonce_withdraw() {
     assert!(signature.verify(&nonce_authority.as_ref(), &message));
 }
 
+// This test requires interactive approval of message signing on the ledger.
+fn test_stake_withdraw() {
+    let (ledger, ledger_base_pubkey) = get_ledger();
+
+    let derivation_path = DerivationPath {
+        account: Some(12345),
+        change: None,
+    };
+
+    let stake_account = ledger_base_pubkey;
+    let stake_authority = ledger
+        .get_pubkey(&derivation_path, false)
+        .expect("get pubkey");
+    let to = Pubkey::new(&[1u8; 32]);
+    let instruction = stake_instruction::withdraw(
+        &stake_account,
+        &stake_authority,
+        &to,
+        42,
+    );
+    let message = Message::new(vec![instruction]).serialize();
+    println!("stake: {:?}", message);
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&stake_authority.as_ref(), &message));
+}
+
 fn main() {
+    test_stake_withdraw();
     test_nonce_withdraw();
     test_create_vote_account();
     test_create_vote_account_with_seed();

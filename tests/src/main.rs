@@ -624,7 +624,60 @@ fn test_stake_authorize() {
     assert!(signature.verify(&stake_authority.as_ref(), &message));
 }
 
+// This test requires interactive approval of message signing on the ledger.
+fn test_vote_authorize() {
+    let (ledger, ledger_base_pubkey) = get_ledger();
+
+    let derivation_path = DerivationPath {
+        account: Some(12345),
+        change: None,
+    };
+
+    let vote_account = ledger_base_pubkey;
+    let vote_authority = ledger
+        .get_pubkey(&derivation_path, false)
+        .expect("get pubkey");
+    let new_authority = Pubkey::new(&[1u8; 32]);
+    let vote_auth = vote_instruction::authorize(
+        &vote_account,
+        &vote_authority,
+        &new_authority,
+        vote_state::VoteAuthorize::Voter,
+    );
+
+    // Authorize voter
+    let message = Message::new(vec![vote_auth.clone()]).serialize();
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&vote_authority.as_ref(), &message));
+
+    let new_authority = Pubkey::new(&[2u8; 32]);
+    let withdraw_auth = vote_instruction::authorize(
+        &vote_account,
+        &vote_authority,
+        &new_authority,
+        vote_state::VoteAuthorize::Withdrawer,
+    );
+
+    // Authorize withdrawer
+    let message = Message::new(vec![withdraw_auth.clone()]).serialize();
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&vote_authority.as_ref(), &message));
+
+    // Authorize both
+    // Note: Instruction order must match CLI; voter first, withdrawer second
+    let message = Message::new(vec![vote_auth, withdraw_auth]).serialize();
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&vote_authority.as_ref(), &message));
+}
+
 fn main() {
+    test_vote_authorize();
     test_stake_authorize();
     test_nonce_authorize();
     test_vote_withdraw();

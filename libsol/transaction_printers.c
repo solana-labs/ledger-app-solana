@@ -26,6 +26,17 @@ const InstructionBrief create_stake_account_with_seed_brief[] = {
         infos_length                                            \
     )
 
+const InstructionBrief stake_authorize_both_brief[] = {
+    STAKE_IX_BRIEF(StakeAuthorize),
+    STAKE_IX_BRIEF(StakeAuthorize),
+};
+#define is_stake_authorize_both(infos, infos_length)\
+    instruction_infos_match_briefs(                 \
+        infos,                                      \
+        stake_authorize_both_brief,                 \
+        infos_length                                \
+    )
+
 const InstructionBrief create_nonce_account_brief[] = {
     SYSTEM_IX_BRIEF(SystemCreateAccount),
     SYSTEM_IX_BRIEF(SystemInitializeNonceAccount),
@@ -100,6 +111,39 @@ static int print_create_stake_account_with_seed(
 
     BAIL_IF(print_system_create_account_with_seed_info(NULL, cws_info, header));
     BAIL_IF(print_stake_initialize_info(NULL, si_info, header));
+
+    return 0;
+}
+
+static int print_stake_authorize_both(
+    const MessageHeader* header,
+    const InstructionInfo* infos,
+    size_t infos_lenght
+) {
+    const StakeAuthorizeInfo* staker_info = &infos[0].stake.authorize;
+    const StakeAuthorizeInfo* withdrawer_info = &infos[1].stake.authorize;
+    SummaryItem* item;
+
+    // Sanity check
+    BAIL_IF(staker_info->authorize != StakeAuthorizeStaker);
+    BAIL_IF(withdrawer_info->authorize != StakeAuthorizeWithdrawer);
+
+    item = transaction_summary_primary_item();
+    summary_item_set_pubkey(item, "Set stake auth.", staker_info->account);
+
+    if (staker_info->new_authority == withdrawer_info->new_authority) {
+        item = transaction_summary_general_item();
+        summary_item_set_pubkey(item, "New authorities", staker_info->new_authority);
+    } else {
+        item = transaction_summary_general_item();
+        summary_item_set_pubkey(item, "New stake auth.", staker_info->new_authority);
+
+        item = transaction_summary_general_item();
+        summary_item_set_pubkey(item, "New w/d auth.", withdrawer_info->new_authority);
+    }
+
+    item = transaction_summary_general_item();
+    summary_item_set_pubkey(item, "Authorized by", withdrawer_info->authority);
 
     return 0;
 }
@@ -208,6 +252,8 @@ int print_transaction(const MessageHeader* header, const InstructionInfo* infos,
                 return print_create_vote_account(header, infos, infos_length);
             } else if (is_create_vote_account_with_seed(infos, infos_length)) {
                 return print_create_vote_account_with_seed(header, infos, infos_length);
+            } else if (is_stake_authorize_both(infos, infos_length)) {
+                return print_stake_authorize_both(header, infos, infos_length);
             }
         }
         default:

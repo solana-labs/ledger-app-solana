@@ -435,6 +435,27 @@ void test_process_message_body_vote_withdraw() {
     process_message_body_and_sanity_check(message, sizeof(message), 5);
 }
 
+void test_process_message_body_system_nonce_authorize() {
+    uint8_t message[] = {
+        1, 1, 1,
+        3,
+            18, 67, 85, 168, 124, 173, 88, 142, 77, 171, 80, 178, 8, 218, 230, 68, 85, 231, 39, 54, 184, 42, 162, 85, 172, 139, 54, 173, 194, 7, 64, 250,
+            112, 173, 25, 161, 89, 143, 220, 223, 128, 33, 149, 41, 12, 152, 202, 202, 203, 163, 182, 246, 158, 15, 22, 77, 171, 71, 63, 249, 10, 117, 172, 52,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1,
+            // system - authorize nonce
+            2,
+            2,
+                1, 0,
+            36,
+                7, 0, 0, 0,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    };
+
+    process_message_body_and_sanity_check(message, sizeof(message), 4);
+}
+
 int main() {
     test_process_message_body_ok();
     test_process_message_body_too_few_ix_fail();
@@ -454,6 +475,7 @@ int main() {
     test_process_message_body_nonce_withdraw();
     test_process_message_body_stake_withdraw();
     test_process_message_body_vote_withdraw();
+    test_process_message_body_system_nonce_authorize();
 
     printf("passed\n");
     return 0;

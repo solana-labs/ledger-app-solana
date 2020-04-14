@@ -486,7 +486,6 @@ fn test_nonce_withdraw() {
         42,
     );
     let message = Message::new(vec![instruction]).serialize();
-    println!("nonce: {:?}", message);
     let signature = ledger
         .sign_message(&derivation_path, &message)
         .expect("sign transaction");
@@ -514,7 +513,6 @@ fn test_stake_withdraw() {
         42,
     );
     let message = Message::new(vec![instruction]).serialize();
-    println!("stake: {:?}", message);
     let signature = ledger
         .sign_message(&derivation_path, &message)
         .expect("sign transaction");
@@ -542,14 +540,40 @@ fn test_vote_withdraw() {
         &to,
     );
     let message = Message::new(vec![instruction]).serialize();
-    println!("vote: {:?}", message);
     let signature = ledger
         .sign_message(&derivation_path, &message)
         .expect("sign transaction");
     assert!(signature.verify(&vote_authority.as_ref(), &message));
 }
 
+// This test requires interactive approval of message signing on the ledger.
+fn test_nonce_authorize() {
+    let (ledger, ledger_base_pubkey) = get_ledger();
+
+    let derivation_path = DerivationPath {
+        account: Some(12345),
+        change: None,
+    };
+
+    let nonce_account = ledger_base_pubkey;
+    let nonce_authority = ledger
+        .get_pubkey(&derivation_path, false)
+        .expect("get pubkey");
+    let new_authority = Pubkey::new(&[1u8; 32]);
+    let instruction = system_instruction::authorize_nonce_account(
+        &nonce_account,
+        &nonce_authority,
+        &new_authority,
+    );
+    let message = Message::new(vec![instruction]).serialize();
+    let signature = ledger
+        .sign_message(&derivation_path, &message)
+        .expect("sign transaction");
+    assert!(signature.verify(&nonce_authority.as_ref(), &message));
+}
+
 fn main() {
+    test_nonce_authorize();
     test_vote_withdraw();
     test_stake_withdraw();
     test_nonce_withdraw();

@@ -25,6 +25,7 @@ typedef struct StakeDelegateInfo {
 // which looks like a `Lockup`, but all of the members are wrapped
 // with `Option<>`s
 typedef enum StakeLockupPresent {
+    StakeLockupHasNone      = 0,
     StakeLockupHasTimestamp = 1 << 0,
     StakeLockupHasEpoch     = 1 << 1,
     StakeLockupHasCustodian = 1 << 2,

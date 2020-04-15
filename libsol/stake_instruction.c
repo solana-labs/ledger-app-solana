@@ -159,6 +159,33 @@ static int parse_stake_deactivate_instruction(
     return 0;
 }
 
+static int parse_stake_lockupargs(
+    Parser* parser,
+    StakeLockup* lockup
+) {
+    // LockupArgs
+    enum StakeLockupPresent present = StakeLockupHasNone;
+    enum Option option;
+    BAIL_IF(parse_option(parser, &option));
+    if (option == OptionSome) {
+        BAIL_IF(parse_i64(parser, &lockup->unix_timestamp));
+        present |= StakeLockupHasTimestamp;
+    }
+    BAIL_IF(parse_option(parser, &option));
+    if (option == OptionSome) {
+        BAIL_IF(parse_u64(parser, &lockup->epoch))
+        present |= StakeLockupHasEpoch;
+    }
+    BAIL_IF(parse_option(parser, &option));
+    if (option == OptionSome) {
+        BAIL_IF(parse_pubkey(parser, &lockup->custodian));
+        present |= StakeLockupHasCustodian;
+    }
+    lockup->present = present;
+
+    return 0;
+}
+
 int parse_stake_instructions(const Instruction* instruction, const MessageHeader* header, StakeInfo* info) {
     Parser parser = {instruction->data, instruction->data_length};
 

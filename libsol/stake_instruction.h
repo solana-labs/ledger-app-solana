@@ -74,6 +74,12 @@ typedef struct StakeDeactivateInfo {
     const Pubkey* authority;
 } StakeDeactivateInfo;
 
+typedef struct StakeSetLockupInfo {
+    const Pubkey* account;
+    const Pubkey* custodian;
+    StakeLockup lockup;
+} StakeSetLockupInfo;
+
 typedef struct StakeInfo {
     enum StakeInstructionKind kind;
     union {
@@ -82,6 +88,7 @@ typedef struct StakeInfo {
         StakeWithdrawInfo withdraw;
         StakeAuthorizeInfo authorize;
         StakeDeactivateInfo deactivate;
+        StakeSetLockupInfo set_lockup;
     };
 } StakeInfo;
 

@@ -86,8 +86,10 @@ void handleApdu(volatile unsigned int *flags, volatile unsigned int *tx) {
                     handleGetPubkey(G_io_apdu_buffer[OFFSET_P1], G_io_apdu_buffer[OFFSET_P2], dataBuffer, dataLength, flags, tx);
                     break;
 
-                case INS_SIGN_MESSAGE:
                 case INS_SIGN_MESSAGE16:
+                    dataLength |= DATA_HAS_LENGTH_PREFIX;
+                    // Fall through
+                case INS_SIGN_MESSAGE:
                     handleSignMessage(G_io_apdu_buffer[OFFSET_P1], G_io_apdu_buffer[OFFSET_P2], dataBuffer, dataLength, flags, tx);
                     break;
 

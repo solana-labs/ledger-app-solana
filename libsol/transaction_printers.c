@@ -202,7 +202,7 @@ static int print_stake_authorize_both(
         item = transaction_summary_general_item();
         summary_item_set_pubkey(
             item,
-            "New w/d auth",
+            "New withdraw auth",
             withdrawer_info->new_authority
         );
     }
@@ -319,7 +319,7 @@ static int print_vote_authorize_both(
         item = transaction_summary_general_item();
         summary_item_set_pubkey(
             item,
-            "New w/d auth",
+            "New withdraw auth",
             withdrawer_info->new_authority
         );
     }

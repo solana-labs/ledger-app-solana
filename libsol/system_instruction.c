@@ -348,7 +348,7 @@ static int print_system_advance_nonce_account(
     SummaryItem* item;
 
     item = transaction_summary_primary_item();
-    summary_item_set_pubkey(item, "Advance Nonce", info->account);
+    summary_item_set_pubkey(item, "Advance nonce", info->account);
 
     item = transaction_summary_general_item();
     summary_item_set_pubkey(item, "Authorized by", info->authority);

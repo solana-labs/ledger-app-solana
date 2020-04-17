@@ -374,7 +374,7 @@ static int print_stake_authorize_info(
             new_authority_title = "New stake auth";
             break;
         case StakeAuthorizeWithdrawer:
-            new_authority_title = "New w/d auth";
+            new_authority_title = "New withdraw auth";
             break;
     }
 

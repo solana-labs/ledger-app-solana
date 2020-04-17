@@ -220,7 +220,7 @@ static int print_vote_authorize_info(
             new_authority_title = "New vote auth";
             break;
         case VoteAuthorizeWithdrawer:
-            new_authority_title = "New w/d auth";
+            new_authority_title = "New withdraw auth";
             break;
     }
 

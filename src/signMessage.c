@@ -83,7 +83,7 @@ void handleSignMessage(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dat
     if ((p2 & P2_EXTEND) == 0) {
         MEMCLEAR(G_derivationPath);
         MEMCLEAR(G_message);
-	G_messageLength = 0;
+	    G_messageLength = 0;
 
         G_derivationPathLength = read_derivation_path(dataBuffer, dataLength, G_derivationPath);
         dataBuffer += 1 + G_derivationPathLength * 4;

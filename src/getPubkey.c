@@ -14,7 +14,7 @@ int read_derivation_path(const uint8_t *dataBuffer, size_t size, uint32_t *deriv
         THROW(0x6a80);
     }
     if (1 + 4 * len > size) {
-      THROW(0x6a80);
+        THROW(0x6a80);
     }
 
     for (unsigned int i = 0; i < len; i++) {
@@ -37,30 +37,30 @@ UX_STEP_NOCB(
     ux_display_public_flow_5_step,
     bnnn_paging,
     {
-      .title = "Pubkey",
-      .text = publicKeyStr,
+        .title = "Pubkey",
+        .text = publicKeyStr,
     });
 UX_STEP_VALID(
     ux_display_public_flow_6_step,
     pb,
     sendResponse(set_result_get_pubkey(), true),
     {
-      &C_icon_validate_14,
-      "Approve",
+        &C_icon_validate_14,
+        "Approve",
     });
 UX_STEP_VALID(
     ux_display_public_flow_7_step,
     pb,
     sendResponse(0, false),
     {
-      &C_icon_crossmark,
-      "Reject",
+        &C_icon_crossmark,
+        "Reject",
     });
 
 UX_FLOW(ux_display_public_flow,
-  &ux_display_public_flow_5_step,
-  &ux_display_public_flow_6_step,
-  &ux_display_public_flow_7_step
+    &ux_display_public_flow_5_step,
+    &ux_display_public_flow_6_step,
+    &ux_display_public_flow_7_step
 );
 
 void handleGetPubkey(uint8_t p1, uint8_t p2, uint8_t *dataBuffer, uint16_t dataLength, volatile unsigned int *flags, volatile unsigned int *tx) {

@@ -22,7 +22,7 @@ void getPublicKey(uint32_t *derivationPath, uint8_t *publicKeyArray, uint8_t pat
 }
 
 uint32_t readUint32BE(uint8_t *buffer) {
-  return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | (buffer[3]);
+    return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | (buffer[3]);
 }
 
 void getPrivateKey(uint32_t *derivationPath, cx_ecfp_private_key_t *privateKey, uint8_t pathLength) {

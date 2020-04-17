@@ -48,7 +48,7 @@ void handleApdu(volatile unsigned int *flags, volatile unsigned int *tx) {
     BEGIN_TRY {
         TRY {
             if (G_io_apdu_buffer[OFFSET_CLA] != CLA) {
-            THROW(0x6E00);
+                THROW(0x6E00);
             }
 
             int dataLength;
@@ -69,7 +69,6 @@ void handleApdu(volatile unsigned int *flags, volatile unsigned int *tx) {
             }
 
             switch (G_io_apdu_buffer[OFFSET_INS]) {
-
                 case INS_GET_APP_CONFIGURATION:
                 case INS_GET_APP_CONFIGURATION16:
                     G_io_apdu_buffer[0] = (N_storage.dummy_setting_1 ? 0x01 : 0x00);
@@ -102,24 +101,24 @@ void handleApdu(volatile unsigned int *flags, volatile unsigned int *tx) {
             THROW(EXCEPTION_IO_RESET);
         }
         CATCH_OTHER(e) {
-        switch (e & 0xF000) {
-            case 0x6000:
-                sw = e;
-                break;
-            case 0x9000:
-                // All is well
-                sw = e;
-                break;
-            default:
-                // Internal error
-                sw = 0x6800 | (e & 0x7FF);
-                break;
+            switch (e & 0xF000) {
+                case 0x6000:
+                    sw = e;
+                    break;
+                case 0x9000:
+                    // All is well
+                    sw = e;
+                    break;
+                default:
+                    // Internal error
+                    sw = 0x6800 | (e & 0x7FF);
+                    break;
+                }
+                // Unexpected exception => report
+                G_io_apdu_buffer[*tx] = sw >> 8;
+                G_io_apdu_buffer[*tx + 1] = sw;
+                *tx += 2;
             }
-            // Unexpected exception => report
-            G_io_apdu_buffer[*tx] = sw >> 8;
-            G_io_apdu_buffer[*tx + 1] = sw;
-            *tx += 2;
-        }
         FINALLY {
         }
     }
@@ -159,7 +158,7 @@ void app_main(void) {
                 handleApdu(&flags, &tx);
             }
             CATCH(EXCEPTION_IO_RESET) {
-              THROW(EXCEPTION_IO_RESET);
+                THROW(EXCEPTION_IO_RESET);
             }
             CATCH_OTHER(e) {
                 switch (e & 0xF000) {
@@ -269,7 +268,7 @@ unsigned short io_exchange_al(unsigned char channel, unsigned short tx_len) {
                         // transaction)
             } else {
                 return io_seproxyhal_spi_recv(G_io_apdu_buffer,
-                                            sizeof(G_io_apdu_buffer), 0);
+                    sizeof(G_io_apdu_buffer), 0);
             }
 
         default:

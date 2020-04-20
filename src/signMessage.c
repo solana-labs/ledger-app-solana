@@ -115,7 +115,7 @@ void handleSignMessage(
     if ((p2 & P2_EXTEND) == 0) {
         MEMCLEAR(G_derivationPath);
         MEMCLEAR(G_message);
-	    G_messageLength = 0;
+        G_messageLength = 0;
         G_numDerivationPaths = 0;
 
         if (!deprecated_host) {

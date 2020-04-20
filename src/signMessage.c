@@ -10,6 +10,7 @@
 
 static uint8_t G_message[MAX_MESSAGE_LENGTH];
 static int G_messageLength;
+static uint8_t G_numDerivationPaths;
 static uint32_t G_derivationPath[BIP32_PATH];
 static int G_derivationPathLength;
 
@@ -115,6 +116,17 @@ void handleSignMessage(
         MEMCLEAR(G_derivationPath);
         MEMCLEAR(G_message);
 	    G_messageLength = 0;
+        G_numDerivationPaths = 0;
+
+        if (!deprecated_host) {
+            G_numDerivationPaths = dataBuffer[0];
+            dataBuffer++;
+            dataLength--;
+            // We only support one derivation path ATM
+            if (G_numDerivationPaths != 1) {
+                THROW(EXCEPTION_OVERFLOW);
+            }
+        }
 
         G_derivationPathLength = read_derivation_path(
             dataBuffer,

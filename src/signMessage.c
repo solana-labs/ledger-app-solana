@@ -105,9 +105,9 @@ void handleSignMessage(
     volatile unsigned int *flags,
     volatile unsigned int *tx
 ) {
-    int data_has_length_prefix = (dataLength & DATA_HAS_LENGTH_PREFIX);
+    int deprecated_host = ((dataLength & DATA_HAS_LENGTH_PREFIX) != 0);
 
-    if (data_has_length_prefix) {
+    if (deprecated_host) {
         dataLength &= ~DATA_HAS_LENGTH_PREFIX;
     }
 
@@ -126,7 +126,7 @@ void handleSignMessage(
     }
 
     int messageLength;
-    if (data_has_length_prefix) {
+    if (deprecated_host) {
         messageLength = U2BE(dataBuffer, 0);
         dataBuffer += 2;
     } else {

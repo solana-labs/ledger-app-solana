@@ -2,6 +2,7 @@
 #include "os.h"
 #include "ux.h"
 #include "cx.h"
+#include "menu.h"
 #include "utils.h"
 #include "sol/parser.h"
 #include "sol/printer.h"
@@ -173,18 +174,22 @@ void handleSignMessage(
 
     transaction_summary_reset();
     if (process_message_body(parser.buffer, parser.buffer_length, &header)) {
-        SummaryItem* item = transaction_summary_primary_item();
-        summary_item_set_string(item, "Unrecognized", "format");
+        if (N_storage.settings.allow_blind_sign == BlindSignEnabled) {
+            SummaryItem* item = transaction_summary_primary_item();
+            summary_item_set_string(item, "Unrecognized", "format");
 
-        cx_hash_sha256(
-            dataBuffer,
-            dataLength,
-            (uint8_t*) &UnrecognizedMessageHash,
-            HASH_LENGTH
-        );
+            cx_hash_sha256(
+                dataBuffer,
+                dataLength,
+                (uint8_t*) &UnrecognizedMessageHash,
+                HASH_LENGTH
+            );
 
-        item = transaction_summary_general_item();
-        summary_item_set_hash(item, "Message Hash", &UnrecognizedMessageHash);
+            item = transaction_summary_general_item();
+            summary_item_set_hash(item, "Message Hash", &UnrecognizedMessageHash);
+        } else {
+            THROW(NOT_SUPPORTED);
+        }
     }
 
     // Set fee-payer if it hasn't already been resolved by

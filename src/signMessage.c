@@ -79,7 +79,11 @@ UX_STEP_NOCB_INIT(
     paging,
     {
         size_t step_index = G_ux.flow_stack[stack_slot].index;
-        if (transaction_summary_display_item(step_index)) {
+        enum DisplayFlags flags = DisplayFlagNone;
+        if (N_storage.settings.pubkey_display == PubkeyDisplayLong) {
+            flags |=  DisplayFlagLongPubkeys;
+        }
+        if (transaction_summary_display_item(step_index, flags)) {
             THROW(0x6f01);
         }
     },

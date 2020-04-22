@@ -167,6 +167,8 @@ void test_transaction_summary_update_display_for_item() {
     summary_item_set_pubkey(&item, "pubkey", &pubkey);
     assert(transaction_summary_update_display_for_item(&item, DisplayFlagNone) == 0);
     assert_transaction_summary_display("pubkey", "1111111..1111111");
+    assert(transaction_summary_update_display_for_item(&item, DisplayFlagLongPubkeys) == 0);
+    assert_transaction_summary_display("pubkey", "11111111111111111111111111111111");
 
     Hash hash;
     memset(&hash, 0, sizeof(Hash));

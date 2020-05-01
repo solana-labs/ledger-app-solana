@@ -49,7 +49,9 @@ static int parse_vote_initialize_instruction(
     instruction_accounts_iterator_init(&it, header, instruction);
 
     BAIL_IF(instruction_accounts_iterator_next(&it, &info->account));
+    // Skip rent sysvat
     BAIL_IF(instruction_accounts_iterator_next(&it, NULL));
+    // Skip clock sysvar
     BAIL_IF(instruction_accounts_iterator_next(&it, NULL));
 
     BAIL_IF(parse_pubkey(parser, &info->vote_init.validator_id));

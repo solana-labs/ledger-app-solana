@@ -200,7 +200,7 @@ void test_transaction_summary_update_display_for_item() {
 
     summary_item_set_timestamp(&item, "timestamp", 42);
     assert(transaction_summary_update_display_for_item(&item, DisplayFlagNone) == 0);
-    assert_transaction_summary_display("timestamp", "1970-01-01T00:00:42Z");
+    assert_transaction_summary_display("timestamp", "1970-01-01 00:00:42");
 }
 
 #define display_item_test_helper(item, item_index)                      \

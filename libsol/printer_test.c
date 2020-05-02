@@ -105,16 +105,16 @@ void test_print_u64() {
 }
 
 void test_print_timestamp() {
-#define RFC3339_MAX (4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 1)
+#define RFC3339_MAX (4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1)
     char out[RFC3339_MAX];
     int64_t unix_epoch = 0;
-    const char* expect_unix_epoch = "1970-01-01T00:00:00Z";
+    const char* expect_unix_epoch = "1970-01-01 00:00:00";
 
     assert(print_timestamp(unix_epoch, out, sizeof(out)) == 0);
     assert_string_equal(out, expect_unix_epoch);
 
     int64_t now = 1588374349;
-    const char* expect_now = "2020-05-01T23:05:49Z";
+    const char* expect_now = "2020-05-01 23:05:49";
 
     assert(print_timestamp(now, out, sizeof(out)) == 0);
     assert_string_equal(out, expect_now);

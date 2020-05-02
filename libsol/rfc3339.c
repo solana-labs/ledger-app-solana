@@ -52,7 +52,7 @@ rdn_to_ymd(uint32_t rdn, uint16_t *yp, uint16_t *mp, uint16_t *dp) {
     *dp = d - DayOffset[m];
 }
 
-#define EPOCH INT64_C(62135683200)  /* 1970-01-01T00:00:00 */
+#define EPOCH INT64_C(62135683200)  /* 1970-01-01 00:00:00 */
 
 int rfc3339_format(char *dst, size_t len, int64_t seconds) {
     unsigned char *p;
@@ -61,7 +61,7 @@ int rfc3339_format(char *dst, size_t len, int64_t seconds) {
     uint16_t y, m, d;
     size_t dlen;
 
-    dlen = sizeof("YYYY-MM-DDThh:mm:ssZ") - 1;
+    dlen = sizeof("YYYY-MM-DD hh:mm:ss") - 1;
     if (dlen >= len)
         return 1;
 
@@ -85,7 +85,7 @@ int rfc3339_format(char *dst, size_t len, int64_t seconds) {
     p[13] = ':';
     p[12] = '0' + (v % 10); v /= 10;
     p[11] = '0' + (v % 10);
-    p[10] = 'T';
+    p[10] = ' ';
     p[ 9] = '0' + (d % 10); d /= 10;
     p[ 8] = '0' + (d % 10);
     p[ 7] = '-';
@@ -98,7 +98,6 @@ int rfc3339_format(char *dst, size_t len, int64_t seconds) {
     p[ 0] = '0' + (y % 10);
     p += 19;
 
-    *p++ = 'Z';
     *p = 0;
     return 0;
 }
